@@ -24,21 +24,75 @@ Attach the downloaded Debian ISO file to the virtual machine’s optical drive t
 # 3. Istalling Debian
 
 ## 3.1 Configure Location
-Select your region and time zone to localize the system settings
+1. We will choose the version without graphical Interface. So we choose the Insallt command. Be aware that we will only use our Keys, so press Enter to Condirm something, the arrows up and down to choose the commands. Use the command key to leave th machine and get your mouse back
+   ![Install](./Images/install.png)
+2. Choose the language for your Virtual machine.
+   ![language](./Images/choose_language.png)
+3. Select the Country you are in
+   ![country](./Images/choose_country.png)
+4. Choose the United states
+   ![US](./Images/Keyboard.png)
+5. Now choose your keymap.
+   ![keyymap](./Images/Keyboard2.png)
 ## 3.2 Configure the Network
-Set up the network with automatic (DHCP) or manual (static IP) configurations as required.
+1. Set the hostname to be your_login42
+   ![hostname](./Images/Hostname.png)
+2. Leave the Domain name blank and press continue. 
+   ![domain](./Images/domain.png)
 ## 3.3 Setup users and password
-Create a root password and a non-root user account with a strong password for security.
-## 3.4 Configure the clock
-Choose the time zone for accurate system time settings.
-## 3.5 Partioning Disks
-Partition the hard drive as required, using guided partitioning for simplicity (e.g., separate /home and /var partitions).
+!! Save your password as we weill need this later and during your evaluation
+1. We have to set the root user password. Press the Space bar on the Show Password in Clear to see your password. Repeat this Process in the next step.
+   ![root_password](./Images/root_password.png)
+2. Set up the user name with your_login. This will be part of the evaluation.
+   ![username](./Images/username.png)
+3. Repeat this Process again 
+   ![username](./Images/user_name.png)
+4. And now we set upt our user password. Write this down aswell.
+   ![user_password](./Images/user_password.png)
+
+## 3.4 Partioning Disks
+Be aware this is a guide for the Non-Bonus part of the Project.
+1. Select Guided - use entire disk and set up encrypted LVM.
+   ![LVM](./Images/disk_partioning.png)
+2. We choose the disk to create the partion on.
+   ![disk](./Images/disk.png)
+3. Now we want to make the partions as the subjects wants.
+   ![seperate](./Images/seperating.png)
+4. We choose Yes so the changes will be written in the disk.
+   ![yes](./
+5. We click on cancel, as the erasing of the data is not required.
+   ![erasing](./Images/erasing.png)
+6. Now again we need a passphrase for the LVM encrypt. Write this down aswell.
+   ![pass_phrase](./Images/passphrase.png)
+7. In this step we want to input max for the volume group during the guided partioning. You can type in the default aswell. 
+   ![max](./Images/max.png)
+8. To wrap the Partioning and write the changes to the disk choose Finish partioning
+   ![finish_partioning](./Images/finish_partionig.png)
+9. We choose yes and confirm that we do not want to change anything.
+   ![yes](./Images/yes.png)
 ## 3.6 Configuring the package Manager
-Set up the package manager by selecting a Debian mirror closest to your location.
+1. We will select No as it is not required to add additional packages.
+   ![packages](./Images/no.png)
+2. We choose again our country
+   ![country](./Images/country.png)
+3. We choose deb.debian.org as recommended by debian.
+   ![debian](./Images/deb.debian.png)
+4. We will leave the HTTP PRoxy blank and continue
+   ![proxy](./Images/http_proxy.png)
+5. We will select no.
+   ![contest](./Images/contest.png)
+6. We want to leave everything blank here aswell. Press space to deselect.
+   ![empty](./Images/blank.png)
 ## 3.7 Install the Grub boot loader
-Install the GRUB boot loader to manage the boot process for your operating system.
+1. Select Yes to install Grub Boot loader
+   ![boot_loader](./Imges/boot_loader.png)
+2. Choose /dev/sda for the boot loader installation.
+   ![installation](./Images/installation.png)
+3. To finish the Installation press continue
+   ![boot_finish](./Images/grub_finish.png)
 ## 3.8 Finish Installation
-Complete the installation process and reboot into your new Debian system.
+1. To finish we click on continue
+   ![finish](./Images/finish.png)
 # 4. Setup the Virtual Machine 
 
 ## 4.1 First Connection with VM
