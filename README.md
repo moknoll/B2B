@@ -11,7 +11,13 @@
 ## 2.2 Virtual Box setup
 Install VirtualBox and create a new virtual machine with the recommended settings (e.g., 2GB RAM, 20GB disk).
 1. Open Virtual Box and click on New
-   !
+   ![new](./Images/new.png)
+2. Choose Name for the machine and the folder (goinfre) which will be located in
+   ![add_folder](./Images/add_folder.png)
+3. Select the Total RAM which will be reserved for the machine.
+   ![RAM](./Images/MB.png)
+4. Choose the recommanded size on storage.
+   ![GB](./Images/GB.png)
 
 ## 2.3 Attaching ISO
 Attach the downloaded Debian ISO file to the virtual machine’s optical drive to boot and install Debian.
