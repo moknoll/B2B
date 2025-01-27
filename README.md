@@ -96,14 +96,96 @@ Be aware this is a guide for the Non-Bonus part of the Project.
 # 4. Setup the Virtual Machine 
 
 ## 4.1 First Connection with VM
-Log in to the VM using the credentials you created and open a terminal.
-## 4.2 Installing Sudo & Vim
+1. First of all connect by clicking on Debina GNI/Linux
+   ![first](./Images/first.png)
 
-## 4.3 Configauration of user and groups
+2. Put in you passphrase we created earlier
+   ![passphrase](./Images/first_commcetion)
+3. Now type in your username and password for this user. It should now look like this.
+
+## 4.2 Installing Sudo & Vim
+1. We type in su. With this command we change to the "super user".
+   ![sudo connect](./Images/sudo)
+2. As we want to install sudo and vim we type in. We will now use apt, this is a collection of tools used to install, update, remove and otherwide manage software packages on Debian.
+   ```
+   apt install sudo && vim
+   ```
+3. After the installation we will reboot
+   ```
+   reboot
+   ```
+4. Once the machine is rebooted we have to do step 4.1 again. We switch to root again.
+```
+su
+```
+and then use this command, to check if sudo has been installed correctly
+```
+sudo -V
+```
+
+## 4.3 Configauration of groups
+1. We will create a group called user42 which has to be present during the evaluation.
+   ```
+   sudo addgroup user42
+   ```
+2. To chekc if the group was created run this command
+   ```
+   getent group <groupname>
+   ```
+Now you can see all groups and there members. 
 
 ## 4.4 Installing & Configuring SSH
+1. We will install the main tool for remote access with SSH protocol using openssh. When we will be asked to confirm, type y. 
+   ```
+   sudo apt install openssh-server
+   ```
+2. If you want to check if the installation was succesfull use
+   ```
+   sudo service ssh status
+   ```
+3. As we installed vim before. We can now open and configure the sshd_config file
+   ```
+   su
+   vim /etc/ssh/sshd_config
+   ```
+4. The # will mean that the line is commented; the lines we want to edit need to be uncommented
+   ```
+   # Port 22 -> Port 4242
+   # PermitRootLogin prohibit-password -> PermitRootLogin no
+   ```
+5. To leave just press :wq to save in quit the file. What we have done no will be important later to connect remotely with our user but also not allowing to connect remotly with root.
+
+6. Now we need to channge the file /etc/ssh/ssh_config (not sshd_config)
+   ```
+   vim /etc/ssh/ssh_config
+   ```
+   ```
+   # Port22 -> Port4242
+   ```
+7. Then we will restart the ssh service and check that everything is correct 
+   ```
+   sudo service ssh restart
+   ```
+   ```
+   sudo serveice ssh status
+   ```
+![ssh_check](./Images/ssh_check)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 4.5 Installing & Configuring UFW Firewall 
+1. 
 
 ## 4.6 Sudo policies 
 
