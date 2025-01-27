@@ -171,31 +171,207 @@ Now you can see all groups and there members.
    ```
 ![ssh_check](./Images/ssh_check)
 
+8. If you want to connect via SSH, we need to close the machince first, and go to the Settings.
+   ![ssh_conncetion](./Images/ssh_connection.png)
+9. Afterward click to advanced and to port forwarding. 
+![port_forwarding](./Images/port_forwarding.png)
+10. CLick on the green plus sign to add a new port. and add 4242 to the port host and client.
+![TCP_connection](./Imaged/tcp.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
+11. To connect to our virtual machine remotly. Open a terminal. 
+    ```
+    ssh<user>@localhost -p 4241
+    ``
+  Your gonna be asked yout password for the user, to login. Your login shoul show green now, if the connection was succesful. Type exit to leave. 
 ## 4.5 Installing & Configuring UFW Firewall 
-1. 
-
+1. We need to Install ufw, use this command. Type in y if you get asked and the installation will proceed. 
+   ```
+   sudo apt install ufw
+   ```
+2. Once the installation is done, we need to enable the firewall.
+   ```
+   sudo ufw enable
+   ```
+3. Next step is to allow the connection by putting in our previous ports
+   ```
+   sudo ufw allow 4242
+   ```
+4. To check if everything is correct.
+   ```
+   sudo ufw status
+   ```
 ## 4.6 Sudo policies 
+1. We need to create in /etc/sudoers.d/. This file will store our sudo policies
+   ```
+   touch /etc/sudoers.d/sudo_config
+   ```
+2. Afterwards we need to create a directory /var/log/sudo because we want to log every sudo command
+   ```
+   mkdir /var/log/sudo
+   ```
+3. Now we are going to edit the file createt previously.
+   ```
+   vim /etc/sudoers.d/sudo_config
+4. The file will need following commands
+   ```
+   Defaults  passwd_tries=3
+   Defaults  badpass_message="Mensaje de error personalizado"
+   Defaults  logfile="/var/log/sudo/sudo_config"
+   Defaults  log_input, log_output
+   Defaults  iolog_dir="/var/log/sudo"
+   Defaults  requiretty
+   Defaults     secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+    ```
+   passwd_tries=3: Total tries for entering sudo password.
+   badpass_message="password incorrect": This messafe will display when the password is incorrect.
+   logfile="/var/log/sudo/sudo_config": This will be the path werre the sudo logs are stored
+   log_input, log_output: This will be the information what will be logged.
+   iolog_dir="/var/log/sudo" : again what will be logged.
+   requiretty: TTY will become required. Sudo commands will just be executable in terminal secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin" : These are the folders that will be excluded by sudo.
 
 ## 4.7 Password policies
+1. First step will be to edit the login.defs file
+   ```
+   vim /etc/login.defs
+   ```
+2. PASS_MAX_DAYS 99999 -> PASS_MAX_DAYS 30
+   PASS_MIN_DAYS 0 -> PASS_MIN_DAYS 2
+3. To continue the installation we need to install a new package to enforce the password quality.
+   ```
+   sudo apt install libpam-pwquality
+   ```
+4. Now we need to edit the file common-password
+   ```
+   vim /etc/pam.d/common-password
+   ```
+5. We need to add the following commands
+   ```
+   minlen=10 ucredit=-1 dcredit=-1 lcredit=-1 maxrepeat=3 reject_username difok=7 enforce_for_root
+   ```
+minlen=10 ➤ The minimun characters a password must contain.
+ucredit=-1 ➤ The password at least have to contain a capital letter. We must write it with a - sign, as is how it knows that's refering to minumum caracters; if we put a + sign it will refer to maximum characters.
+dcredit=-1 ➤ The passworld at least have to containt a digit.
+lcredit=-1 ➤ The password at least have to contain a lowercase letter.
+maxrepeat=3 ➤ The password can not have the same character repited three contiusly times.
+reject_username ➤ The password can not contain the username inside itself.
+difok=7 ➤ The password it have to containt at least seven diferent characters from the last password ussed.
+enforce_for_root ➤ We will implement this password policy to root.
 
 ## 4.8 Srcipt
+This is going to be a really important part do not just copy and paste. You will need to understand every step, and will be asked to explain your script during the evaluation! 
+1. We need to create the script by using this command. Be aware in which folder you put in yout monitoring.sh file
+   ```
+   touch monitoring.sh
+   ```
+
+  ```
+  #!/bin/bash
+
+# ARCH
+arch=$(uname -a)
+
+# CPU PHYSICAL
+cpuf=$(grep "physical id" /proc/cpuinfo | wc -l)
+
+# CPU VIRTUAL
+cpuv=$(grep "processor" /proc/cpuinfo | wc -l)
+
+# RAM
+ram_total=$(free --mega | awk '$1 == "Mem:" {print $2}')
+ram_use=$(free --mega | awk '$1 == "Mem:" {print $3}')
+ram_percent=$(free --mega | awk '$1 == "Mem:" {printf("%.2f"), $3/$2*100}')
+
+# DISK
+disk_total=$(df -m | grep "/dev/" | grep -v "/boot" | awk '{disk_t += $2} END {printf ("%.1fGb\n"), disk_t/1024}')
+disk_use=$(df -m | grep "/dev/" | grep -v "/boot" | awk '{disk_u += $3} END {print disk_u}')
+disk_percent=$(df -m | grep "/dev/" | grep -v "/boot" | awk '{disk_u += $3} {disk_t+= $2} END {printf("%d"), disk_u/disk_t*100}')
+
+# CPU LOAD
+cpul=$(vmstat 1 2 | tail -1 | awk '{printf $15}')
+cpu_op=$(expr 100 - $cpul)
+cpu_fin=$(printf "%.1f" $cpu_op)
+
+# LAST BOOT
+lb=$(who -b | awk '$1 == "system" {print $3 " " $4}')
+
+# LVM USE
+lvmu=$(if [ $(lsblk | grep "lvm" | wc -l) -gt 0 ]; then echo yes; else echo no; fi)
+
+# TCP CONNEXIONS
+tcpc=$(ss -ta | grep ESTAB | wc -l)
+
+# USER LOG
+ulog=$(users | wc -w)
+
+# NETWORK
+ip=$(hostname -I)
+mac=$(ip link | grep "link/ether" | awk '{print $2}')
+
+# SUDO
+cmnd=$(journalctl _COMM=sudo | grep COMMAND | wc -l)
+
+wall "	Architecture: $arch
+	CPU physical: $cpuf
+	vCPU: $cpuv
+	Memory Usage: $ram_use/${ram_total}MB ($ram_percent%)
+	Disk Usage: $disk_use/${disk_total} ($disk_percent%)
+	CPU load: $cpu_fin%
+	Last boot: $lb
+	LVM use: $lvmu
+	Connections TCP: $tcpc ESTABLISHED
+	User log: $ulog
+	Network: IP $ip ($mac)
+	Sudo: $cmnd cmd"
+```
+### Script explanation
+1. System architecute (arch)
+   This will retireve the system architecture and kernel verion usinf the uname -a command.
+2. Physical CPU Count (cpuf)
+   This will count the number of physical CPUs by checking /proc/cpuinfo for entries labeled as "physical id"
+3. Virtual CPU Count (cpuv)
+   Counts the number of virtul CPUs (threads) by finding "processer" entries in /proc/cpuinfo
+4. RAM usage (ram_total, ram_use, ram_percent)
+   ram_total: Total ram in MB.
+   ram_use: Ram currently in use in MB.
+   ram_percent: Percentage of RAM used.
+5. Disk Usage(disk_total, disk_use, disk_percent)
+   disk_total: Total disk space in GB excluding the /boot partion.
+   disk_use: Disk space currently in use in MB.
+   disk_percent: Percentage of disk space used.
+6. CPU Load(cpu_fin)
+   cpul: CPU idle percentage using vmstat
+   cpu_fin: CPU usage percentage(calculated as 100 - idle)
+7. Last Boot Time(lb)
+   Displays the systems last boot time using who -b.
+8. LVM Use(lvmu)
+   Checks if logical volume manager is being used by searchin for "lvm" in lsblk
+9. TCP Connections (tcpc)
+    Counts the number of establsihed TCP connections using the ss command
+10. Logged in Users (ulog)
+    Counts the numbers of currently logged in usrers
+11. Network Information(ip, mac)
+    ip: retrieves the systems IP Adress
+    mac: Gets the MAC adress of the network interface
+12. Sudo Commands Count(cmnd)
+    Counts the number of sudo commands executed by parsing the system journal for sudo entries.
+13. Displaying the information
+    Uses Wall command to broadcast the system information to all logged in users.
 
 ## 4.9 Crontab
-
+1. To configure crontav we use following command
+   ```
+   sudo crontab -u root -e
+   ```
+2. In the file we must add the following command for the script to execute every 10 minutes.
+   ```
+   */10 * * * * sh/path_to_file.sh
+   `` 
 ## 4.10 Signature.txt
+To get the signature, we first need to shutdown our virtual Machine. Be aware that if you want to change something again in your VM the signature will change.
+1. Go to your folder in which you have your .vdi file
+2. Finaly we will run shasum yourmachin.vdi to obtain our Signature. The result of our shasum will be copied into a created signature.txt file, which we tehn will push into our intra repository. 
+As I said before after you pushed your signature.txt it is very important to not change anything in Your virtual Machine again, as this will cause a new siganture. 
+
 
 # 5 Evaluation
 
