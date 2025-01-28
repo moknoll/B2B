@@ -248,14 +248,7 @@ Now you can see all groups and there members.
    ```
    minlen=10 ucredit=-1 dcredit=-1 lcredit=-1 maxrepeat=3 reject_username difok=7 enforce_for_root
    ```
-minlen=10 ➤ The minimun characters a password must contain.
-ucredit=-1 ➤ The password at least have to contain a capital letter. We must write it with a - sign, as is how it knows that's refering to minumum caracters; if we put a + sign it will refer to maximum characters.
-dcredit=-1 ➤ The passworld at least have to containt a digit.
-lcredit=-1 ➤ The password at least have to contain a lowercase letter.
-maxrepeat=3 ➤ The password can not have the same character repited three contiusly times.
-reject_username ➤ The password can not contain the username inside itself.
-difok=7 ➤ The password it have to containt at least seven diferent characters from the last password ussed.
-enforce_for_root ➤ We will implement this password policy to root.
+
 
 ## 4.8 Srcipt
 This is going to be a really important part do not just copy and paste. You will need to understand every step, and will be asked to explain your script during the evaluation! 
@@ -376,5 +369,196 @@ As I said before after you pushed your signature.txt it is very important to not
 # 5 Evaluation
 
 ## 5.1 Evaluation answers
+1. What is a Virtual Machine?
+   It is a Software, that simulates a Computer system and can run Programs, as if it was a real Computer. You can create Multiple simulated in enviroments from a single physical hardware system.
+2. Why did you choose Debian?
+  - In my opinion, as the subject explains aswell Debian is easier to do and if you will look for documentations nearly all of them are done with debian.
+    - The Key Differences (Dedbian vs Rocky)
+    - Debian offers a broad range (from enthusiasts to servers) as the taget audience, while Rocky is more enterpreise focused
+3. What is the difference between apt and aptitude?
+   - apt: A simpler, faster command-line tool for managing packages (installing, updating, removing). It's commonly used in modern Debian-based systems.
+   - aptitude: A more advanced tool with additional features, including text-based interactive interface and better handling of comlex resolutions
+4. What is APPArmor?
+   - A security module for the Linux Kernel that alloes the system adminatrator to restrict the capabilaties of a Program
+5. What is LVM?
+   - LVM (Logical Volume Manager) is a flexible disk management system on Linux that allows you to create, resize, and manage storage volumes dynamically, without requiring unmounting or rebooting.
 
 ## 5.2 Evaluation Commands 
+1. Verify no graphical interface is in use.
+   ```
+   ls /usr/bin/*session
+   ```
+2. Check that UFW service is in use
+   ```
+   sudo service ufw status
+   ```
+   ```
+   sudo ufw status numbered
+   ```
+3. Check that SSH service is in use
+   ```
+   sudo service ssh status
+   ```
+4. Check that you are usingg Debian
+   ```
+   uname -v
+   ```
+5. Check that your user is wihtin the "sudo" and "user42" group
+   ```
+   getent group sudo
+   getent group user42
+   ```
+6. Create a new user and show that it follows password policies we have created
+   ```
+   sudo adduser name_user
+   ```
+   and enter a password that follows the policy
+7. We create a group named "evaluating"
+   ```
+   sudo addgroup evaluating
+   ```
+8. We add the new user to the new group
+   ```
+   sudo adduser name_user evaluating
+   ```
+9. Check that the machine hostname is correct
+    ```
+    hostname
+    ```
+10. Modify hostname to replace your login with the evluators
+    ```
+    vim /etc/hostname
+    ```
+    and replace our login with the new one
+    ```
+    vim /etc/hosts
+    ```
+    repeat that process and reboot the machine.
+    ```
+    reboot
+    ```
+11. Check that all partions are as indicates in the subject
+    ```
+    lsblk
+    ```
+12. Check that sudo is installed.
+    ```
+    which sudo
+    ```
+13. Add the new user to the sudo group
+    ```
+    sudo adduser name_user sudo
+    ```
+    we check that the user in the the group
+    ```
+    getent group sudo
+    ```
+14. SHow the sudo policies implied
+    ```
+    /etc/sudoers.d/sudo_config
+    ```
+15. Show that the path /var/log/sudo/ exists and contains at least one file, in which we should see a history of commands used with sudo.
+16. Check that the UFW progrram is installed on the virtual Machine and it works correctly
+    ```
+    sudo service ufw status
+    ```
+17. List the active rules in ufw.
+    ```
+    sudo ufw status numbered
+    ```
+18. Create a new rule 8080. Verify that it has been added to the active rules and then you can delete it afterwards.
+    ```
+    sudo ufw allow 8080
+    ```
+    to delete
+    ```
+    sudo ufw delete num_rule
+    ```
+19. Check that the ssh service is installed ont the virtua machine, that it works correctly and only with 4242.
+20. Use ssh to log in eith the newly created user. Make sure that you cannot use the root user.
+    ```
+    ssh new_user@localhost -p 4242
+    ```
+    We connect via ssh the new user.
+
+21. We modify the euntime in the script from 10 to 1 minute.
+    ```
+    sudo crontab -u root -e
+    ```
+    ```
+    */1 * * * * sh /home/your_user/monitoring.sh
+    ```
+22. Finally make the script stop running when the server has starte, but without modifying the script
+    ```
+    sudo systemctl stop cron
+    ```
+    Now the cron will stop temporarily, if you reboot the machine, cron will restart
+    Or usse
+    ```
+    sudo systemctl start cron
+    ```
+    To stop cron forever
+    ```
+    sudo systemctl disable cron
+    ```
+    TO restart cron
+    ```
+    sudo systemctl enable cron
+    ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
